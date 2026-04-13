@@ -1,0 +1,8 @@
+# Runtime dependencies for burnin_monitor.py
+mss>=10.1.0
+openpyxl>=3.1.5
+Pillow>=12.1.0
+pytesseract>=0.3.13
+pyserial>=3.5
+pywinauto>=0.6.9
+pywin32>=311

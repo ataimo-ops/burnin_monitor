@@ -60,9 +60,10 @@ def _relaunch_as_admin() -> None:
 # ── 延遲匯入 ────────────────────────────────────────────────────
 MISSING = []
 try:
-    import mss
+    import mss as mss_module
 except ImportError:
     MISSING.append("mss")
+    mss_module = None
 
 try:
     from PIL import Image, ImageEnhance, ImageOps, ImageFilter
@@ -556,7 +557,7 @@ class WindowTextReader:
         if not HAS_PYWINAUTO:
             return None
         try:
-            import win32gui
+            import win32gui  # type: ignore[import-not-found]
             result = {"hwnd": None}
 
             def enum_cb(hwnd, _):
@@ -604,13 +605,13 @@ class ScreenCapture:
         self.monitor_index = monitor_index
 
     def grab_region(self, x, y, width, height):
-        with mss.mss() as sct:
+        with mss_module.mss() as sct:
             raw = sct.grab({"top": y, "left": x,
                             "width": width, "height": height})
             return Image.frombytes("RGB", raw.size, raw.bgra, "raw", "BGRX")
 
     def grab_full_screen(self):
-        with mss.mss() as sct:
+        with mss_module.mss() as sct:
             monitors = sct.monitors
             idx = min(self.monitor_index, len(monitors) - 1)
             raw = sct.grab(monitors[idx])
@@ -674,7 +675,7 @@ class RegionSelector:
     def select(self):
         overlay = tk.Toplevel(self.parent)
         try:
-            import win32api
+            import win32api  # type: ignore[import-not-found]
             left = win32api.GetSystemMetrics(76)
             top  = win32api.GetSystemMetrics(77)
             w    = win32api.GetSystemMetrics(78)
@@ -1461,7 +1462,7 @@ class App(tk.Tk):
     # ── 輔助 ────────────────────────────────────────────────────
     def _get_monitor_names(self):
         try:
-            with mss.mss() as sct:
+            with mss_module.mss() as sct:
                 return ["全螢幕"] + [f"螢幕 {i}" for i in range(1, len(sct.monitors))]
         except Exception:
             return ["全螢幕"]
