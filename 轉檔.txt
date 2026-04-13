@@ -1,0 +1,3 @@
+cd C:\python\burnin_monitor
+
+pyinstaller --onefile --windowed --uac-admin --name burnin_monitor burnin_monitor.py
