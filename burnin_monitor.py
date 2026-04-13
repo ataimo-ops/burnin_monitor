@@ -945,7 +945,7 @@ class ExcelExporter:
 #  GUI 主介面
 # ══════════════════════════════════════════════════════════════════
 class App(tk.Tk):
-    VERSION = "1.6.4"
+    VERSION = "1.6.5"
 
     def __init__(self):
         super().__init__()
@@ -980,13 +980,26 @@ class App(tk.Tk):
         if tess_exe:
             pytesseract.pytesseract.tesseract_cmd = tess_exe
         else:
-            if messagebox.askyesno("找不到 Tesseract",
-                    "找不到 Tesseract OCR 可執行檔。\n是否手動選擇路徑？"):
+            msg = (
+                "找不到 Tesseract OCR 可執行檔。\n\n"
+                "請選擇以下其中一種方式：\n"
+                "  1. 點選『是』手動選擇 tesseract.exe 路徑\n"
+                "  2. 點選『否』前往下載安裝後重新執行\n"
+                "     https://github.com/UB-Mannheim/tesseract/wiki"
+            )
+            if messagebox.askyesno("找不到 Tesseract", msg):
                 path = filedialog.askopenfilename(
                     title="選擇 tesseract.exe",
                     filetypes=[("Executable", "*.exe")])
                 if path:
                     pytesseract.pytesseract.tesseract_cmd = path
+                else:
+                    messagebox.showwarning("警告", "未選擇 Tesseract 路徑，OCR 功能將無法使用。")
+            else:
+                import webbrowser
+                webbrowser.open("https://github.com/UB-Mannheim/tesseract/wiki")
+                messagebox.showinfo("提示", "請安裝 Tesseract 後重新執行程式。")
+                sys.exit(0)
 
     # ── UI 建置 ─────────────────────────────────────────────────
     def _build_ui(self):

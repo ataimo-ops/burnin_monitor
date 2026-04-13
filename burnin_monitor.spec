@@ -5,7 +5,7 @@ a = Analysis(
     ['burnin_monitor.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('C:\\Program Files\\Tesseract-OCR', 'Tesseract-OCR')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
