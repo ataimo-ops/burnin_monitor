@@ -98,13 +98,23 @@ except ImportError:
     HAS_PYWINAUTO = False
 
 # ── Tesseract 路徑 ───────────────────────────────────────────────
-TESSERACT_DEFAULT_PATHS = [
-    r"C:\Program Files\Tesseract-OCR\tesseract.exe",
-    r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
-    r"C:\Users\{}\AppData\Local\Programs\Tesseract-OCR\tesseract.exe".format(
-        os.environ.get("USERNAME", "")
-    ),
-]
+def _get_tesseract_search_paths():
+    paths = []
+    # 1. 若為 PyInstaller 打包的 .exe，優先找內嵌的 Tesseract-OCR 資料夾
+    if getattr(sys, 'frozen', False):
+        embedded = os.path.join(sys._MEIPASS, "Tesseract-OCR", "tesseract.exe")
+        paths.append(embedded)
+    # 2. 系統安裝路徑
+    paths += [
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe",
+        r"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe",
+        r"C:\Users\{}\AppData\Local\Programs\Tesseract-OCR\tesseract.exe".format(
+            os.environ.get("USERNAME", "")
+        ),
+    ]
+    return paths
+
+TESSERACT_DEFAULT_PATHS = _get_tesseract_search_paths()
 
 # BurnInTest 視窗標題關鍵字
 BURNIN_WINDOW_KEYWORDS = ["BurnInTest", "Burn-In Test", "PassMark"]
